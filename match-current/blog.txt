@@ -1,0 +1,16 @@
+wget http://forum.trapexit.org/download.php?id=184&sid=d06da26626a4611d3756dedcb8d09ce4
+make
+sudo mkdir /usr/lib/erlang/lib/leex-0.33/
+sudo cp /home/mariano/Software/leex/ebin/leex.beam /usr/lib/erlang/lib/leex-0.3/
+sudo cp -R /home/mariano/Software/leex/include/ /usr/lib/erlang/lib/leex-0.3/
+erl
+> leex:file(calc_lexer).                                         
+{ok,"calc_lexer.erl"}
+> yecc:file(calc_parser).                                        
+calc_parser.yrl: Warning: conflicts: 4 shift/reduce, 0 reduce/reduce
+{ok,"calc_parser.erl"}
+ 
+solve(String) ->
+    {ok, Tokens, _Endline} = calc_lexer:string(String),
+    {ok, Tree} = calc_parser:parse(Tokens),
+    Tree.
