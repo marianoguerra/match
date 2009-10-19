@@ -25,19 +25,19 @@ expression -> expression match expression : {line('$2'), unwrap('$2'), unwrap('$
 expression -> function_def: '$1'.
 
 function_def 	-> fn argument_def block: {line('$1'), unwrap('$1'), '$2', '$3'}.
-argument_def	-> open arguments close : {line('$1'), unwrap('$1'), '$2'}.
-argument_def	-> open close : {line('$1'), 'empty'}.
+argument_def	-> open arguments close : {line('$1'), unwrap('$1'), lists:flatten('$2')}.
+argument_def	-> open close : {line('$1'), '(', []}.
 
-arguments	-> expression : '$1'.
-arguments	-> expression sep arguments : {line('$2'), unwrap('$2'), '$1', '$3'}.
+arguments	-> var: ['$1'].
+arguments	-> var sep arguments : ['$1', '$3'].
 
 block		-> expression :  {line('$1'), '{', '$1'}.
 block		-> open_block expression close_block : {line('$1'), unwrap('$1'), '$2'}.
 
-literal -> integer : {line('$1'), unwrap('$1')}.
-literal -> float : {line('$1'), unwrap('$1')}.
-literal -> boolean: {line('$1'), unwrap('$1')}.
-literal -> var: {line('$1'), unwrap('$1')}.
+literal -> integer : {integer, line('$1'), unwrap('$1')}.
+literal -> float : {float, line('$1'), unwrap('$1')}.
+literal -> boolean: {atom, line('$1'), unwrap('$1')}.
+literal -> var: {var, line('$1'), unwrap('$1')}.
 
 Erlang code.
 

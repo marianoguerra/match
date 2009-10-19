@@ -1,1 +1,1 @@
-erl -noshell -s calc interpreter -s init stop
+erl -noshell -s calc_interpreter interpreter -s init stop

@@ -15,15 +15,6 @@ function(Name, Line, Arity, Ast) ->
 function_body(Pattern, Line, Body) ->
     {clause, Line, Pattern, [], Body}.
 
-integer(Line, Value) ->
-    {integer, Line, Value}.
-
-float(Line, Value) ->
-    {float, Line, Value}.
-
-atom(Line, Value) ->
-    {atom, Line, Value}.
-
 % the code below is from reia (I would have written the same :P)
 % changes only on == and !=
 forms('*' = Op, Line, Ast1, Ast2) ->
@@ -60,18 +51,14 @@ forms('<=', Line, Ast1, Ast2) ->
   {op, Line, '=<', Ast1, Ast2}.
 % until here code from reia
 
-% build a function that receives no values and returns an integer
-test(Line, ModuleName, FunctionName, Value) ->
-    I = integer(Line, Value),
-    B = function_body([], Line, [I]),
-    F = function(FunctionName, Line, 0, [B]),
-    M = module(ModuleName, F),
-    M.
-
-get_ast(String, ModuleName) ->
+get_ast1(String, ModuleName) ->
     Body = matches(get_tree(String)),
     Function = function(solve, 3, 0, [function_body([], 3, [Body])]),
     module(ModuleName, Function).
+
+get_ast(String, ModuleName) ->
+    Ast = matches(get_tree(String)),
+    module(ModuleName, Ast).
 
 get_code(Ast) ->
     {ok, _, Code} = compile:forms(Ast),
@@ -96,10 +83,10 @@ get_tree(String) ->
     {ok, Tree} = calc_parser:parse(Tokens),
     Tree.
 
-matches({Line, A}) when is_integer(A) -> integer(Line, A);
-matches({Line, A}) when is_float(A) -> float(Line, A);
-matches({Line, 'true'}) -> atom(Line, true);
-matches({Line, 'false'}) -> atom(Line, false);
+matches({integer, _, _} = Ast) -> Ast;
+matches({float, _, _} = Ast) -> Ast;
+matches({atom, _, _} = Ast) -> Ast;
+matches({var, _, _} = Ast) -> Ast;
 matches({Line, '+' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, '-' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, '*' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
@@ -117,5 +104,10 @@ matches({Line, 'and' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, 'or' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({_Line, '(', A}) -> matches(A);
+
+matches({Line, fn, {_, '(', Args}, Body}) ->
+    function(solve, Line, length(Args), matches_body(Body, Args));
 matches(_) -> error.
+
+matches_body({Line, '{', A}, Args) -> [function_body([matches(Arg) || Arg <- Args], Line, [matches(A)])].
 
