@@ -14,6 +14,8 @@ function(Name, Line, Arity, Ast) ->
 function_body(Pattern, Line, Body) ->
     {clause, Line, Pattern, [], Body}.
 
+forms('=', Line, Ast1, Ast2) ->
+  {match, Line, Ast1, Ast2};
 % the code below is from reia (I would have written the same :P)
 % changes only on == and !=
 forms('*' = Op, Line, Ast1, Ast2) ->
@@ -105,6 +107,7 @@ matches({Line, 'or' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({_Line, '(', A}) -> matches(A);
 
+matches({Line, '=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, fn, {_, '(', Args}, Body}) ->
     {'fun', Line, match_fun_body(Body, Args)};
 matches({Line, fun_def, Name, {_, fn, {_, '(', Args}, Body}}) ->

@@ -32,7 +32,7 @@ Rules.
 {CLOSE_BLOCK}		: {token,{close_block,TokenLine,list_to_atom(TokenChars)}}.
 {FN}   		: {token,{fn,TokenLine,list_to_atom(TokenChars)}}.
 {SEP}   	: {token,{sep,TokenLine,list_to_atom(TokenChars)}}.
-{END}   	: {token,{lend,TokenLine,list_to_atom(TokenChars)}}.
+{END}   	: {token,{endl,TokenLine,list_to_atom(TokenChars)}}.
 {MATCH}		: {token,{match,TokenLine,list_to_atom(TokenChars)}}.
 {VAR}+   	: {token,{var,TokenLine,list_to_atom(TokenChars)}}.
 {WS}+  		: skip_token.

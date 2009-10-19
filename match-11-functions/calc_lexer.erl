@@ -567,7 +567,7 @@ yyaction(12, TokenLen, YYtcs, TokenLine) ->
     {token,{sep,TokenLine,list_to_atom(TokenChars)}};
 yyaction(13, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    {token,{lend,TokenLine,list_to_atom(TokenChars)}};
+    {token,{endl,TokenLine,list_to_atom(TokenChars)}};
 yyaction(14, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
     {token,{match,TokenLine,list_to_atom(TokenChars)}};

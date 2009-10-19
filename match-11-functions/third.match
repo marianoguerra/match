@@ -1,0 +1,23 @@
+
+# second program compiled from a file
+
+something = fn (a, b) {
+	c = 1 + 2 * a + b;
+	d = c - 1;
+	c + d;
+};
+
+other = fn (a) {
+	fu = fn (b) {a * b;};
+	fu;
+};
+
+otherone = fn (a) {
+	fn (b) a * b;
+};
+
+squareone = fn (a) { a * a; };
+
+square = fn (a) a * a;
+
+fail = fn (a) a * a;
