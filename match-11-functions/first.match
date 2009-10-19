@@ -1,0 +1,8 @@
+
+# first program compiled from a file
+
+fn (a, b) {
+	1 + 2;
+	a * b;
+};
+
