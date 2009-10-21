@@ -1,0 +1,20 @@
+
+# second program compiled from a file
+
+something = fn (a, b) {
+    c = 1 + 2 * a + b;
+    d = c - 1;
+    c + d;
+};
+
+callsomething = fn(a, b, c) {
+    1 + .something(a, b) * (c + 2);
+};
+
+callparam = fn (f) {
+    f(4);
+};
+
+callcallparam = fn () {
+    .callparam(fn (val) val * 2) + 2;
+};

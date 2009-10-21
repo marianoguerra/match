@@ -68,10 +68,18 @@ to_erlang(From, String, ModuleName) ->
     Ast = get_ast(From, String, ModuleName),
     erl_prettypr:format(erl_syntax:form_list(Ast)).
 
-solve(From, String) ->
-    solve(From, String, module).
+from_erlang(Name) ->
+    {ok, Content} = file:read_file(Name),
+    Program = binary_to_list(Content),
+    {ok,Scanned,_} = erl_scan:string(Program),
+    {ok,Parsed} = erl_parse:parse_form(Scanned),
+    Parsed.
+    %erl_eval:exprs(Parsed, []).
 
-solve(From, String, ModuleName) ->
+build(From, String) ->
+    build(From, String, module).
+
+build(From, String, ModuleName) ->
     compile(ModuleName, get_ast(From, String, ModuleName)).
 
 get_tree(string, String) ->
@@ -107,6 +115,10 @@ matches({Line, 'or' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
 matches({_Line, '(', A}) -> matches(A);
 
+matches({Line, callatom, Atom, Args}) ->
+    {call, Line, {atom, Line, Atom}, lists:map(fun(Arg) -> matches(Arg) end, Args)};
+matches({Line, call, A, Args}) ->
+    {call, Line, matches(A), lists:map(fun(Arg) -> matches(Arg) end, Args)};
 matches({Line, '=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, fn, {_, '(', Args}, Body}) ->
     {'fun', Line, match_fun_body(Body, Args)};

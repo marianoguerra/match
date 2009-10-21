@@ -1,54 +1,65 @@
 Nonterminals 
-predicates predicate literal func_expressions expressions expression function_def argument_def arguments block fun_expression.
+expr_list grammar literal expressions expression
+function_def argument_def arguments block fun_expression function_call
+call_arguments call_argument bool_expr comp_expr add_expr mul_expr.
 
 Terminals 
-add_operator mul_operator match var comparation logic open close fn sep open_block close_block integer float boolean endl.
+bool_op comp_op add_op mul_op match var open close fn sep
+open_block close_block integer float boolean endl atom.
 
-Rootsymbol predicate.
+Rootsymbol grammar.
 
-Nonassoc 100 match.
-Left 200 open.
-Left 300 logic.
-Left 400 comparation.
-Left 500 add_operator.
-Left 600 mul_operator.
+grammar -> expr_list: '$1'.
 
-predicate -> predicates: lists:flatten('$1').
-
-predicates -> fun_expression: ['$1'].
-predicates -> fun_expression predicates: ['$1', '$2'].
+expr_list -> fun_expression: ['$1'].
+expr_list -> fun_expression expr_list: ['$1'|'$2'].
 
 fun_expression -> var match function_def endl: {line('$1'), fun_def, unwrap('$1'), '$3'}.
 
-func_expressions -> expressions: lists:flatten('$1').
-
 expressions -> expression endl: ['$1'].
-expressions -> expression endl expressions: ['$1', '$3'].
+expressions -> expression endl expressions: ['$1'|'$3'].
 
-expression -> literal: '$1'.
+expression -> bool_expr match bool_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
+expression -> bool_expr : '$1'.
 
-expression -> open expression close : {line('$1'), unwrap('$1'), '$2'}.
-expression -> expression add_operator expression : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> expression mul_operator expression : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> expression comparation expression : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> expression logic expression : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> var match expression : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> function_def: '$1'.
+bool_expr -> comp_expr bool_op bool_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
+bool_expr -> comp_expr : '$1'.
+
+comp_expr -> add_expr comp_op comp_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
+comp_expr -> add_expr : '$1'.
+
+add_expr -> mul_expr add_op add_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
+add_expr -> mul_expr : '$1'.
+
+mul_expr -> literal mul_op mul_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
+mul_expr -> literal : '$1'.
+
+function_call -> var open call_arguments close: {line('$2'), call, '$1', '$3'}.
+function_call -> atom open call_arguments close: {line('$2'), callatom, get_atom(unwrap('$1')), '$3'}.
+function_call -> function_call open call_arguments close: {line('$2'), call, '$1', '$3'}.
+
+call_arguments -> call_argument:  ['$1'].
+call_arguments -> call_argument sep call_arguments:  ['$1'|'$3'].
+call_argument -> expression: '$1'.
 
 function_def 	-> fn argument_def block: {line('$1'), unwrap('$1'), '$2', '$3'}.
-argument_def	-> open arguments close : {line('$1'), unwrap('$1'), lists:flatten('$2')}.
+argument_def	-> open arguments close : {line('$1'), unwrap('$1'), '$2'}.
 argument_def	-> open close : {line('$1'), '(', []}.
 
-arguments	-> var: ['$1'].
-arguments	-> var sep arguments : ['$1', '$3'].
+arguments	-> literal: ['$1'].
+arguments	-> literal sep arguments : ['$1'|'$3'].
 
-block		-> expression:  {line('$1'), '{', ['$1']}.
-block		-> open_block func_expressions close_block : {line('$1'), unwrap('$1'), '$2'}.
+block		-> bool_expr:  {line('$1'), '{', ['$1']}.
+block		-> open_block expressions close_block : {line('$1'), unwrap('$1'), '$2'}.
 
 literal -> integer : {integer, line('$1'), unwrap('$1')}.
 literal -> float : {float, line('$1'), unwrap('$1')}.
 literal -> boolean: {atom, line('$1'), unwrap('$1')}.
 literal -> var: {var, line('$1'), unwrap('$1')}.
+literal -> atom: {atom, line('$1'), get_atom(unwrap('$1'))}.
+literal -> open expression close: '$2'.
+literal -> function_call: '$1'.
+literal -> function_def: '$1'.
 
 Erlang code.
 
@@ -59,3 +70,4 @@ line({Line, _}) -> Line;
 line({_, Line, _}) -> Line;
 line({Line, _, _, _}) -> Line.
 
+get_atom([_ | T]) -> list_to_atom(T).
