@@ -1,0 +1,23 @@
+if = fn (true, on_true, _) {
+    on_true();
+} 
+(false, _, on_false) {
+    on_false();
+}
+(0, _, on_false) {
+    on_false();
+}
+(0.0, _, on_false) {
+    on_false();
+}
+(_, on_true, _) {
+    on_true();
+};
+
+test_if = fn (val) {
+    :if(val, fn() true, fn() false);
+};
+
+test_if_one = fn (val, on_true, on_false) {
+    :if(val, fn() on_true, fn() on_false);
+};
