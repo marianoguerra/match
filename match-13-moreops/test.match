@@ -1,0 +1,66 @@
+
+# basic operations
+
+something = fn (a, b) {
+    c = 1 + 2 * a + b;
+    d = c - 1;
+    c + d;
+};
+
+# call another function
+
+callsomething = fn(a, b, c) {
+    1 + :something(a, b) * (c + 2);
+};
+
+# call the passed param
+
+callparam = fn (f) {
+    f(4);
+};
+
+# call a function passing an inline function as param
+
+callcallparam = fn () {
+    :callparam(fn (val) val * 2) + 2;
+};
+
+# return a closure
+
+multiplier = fn (value) {
+    fn (num) {
+        value * num;
+    };
+};
+
+# call a function that is the result of a function call
+
+callfun = fn(multiplier, value) {
+    :multiplier(multiplier)(value);
+};
+
+# do some pattern matching
+
+pattern = fn(1, :atom, var) {
+    var;
+};
+
+# unary operators
+
+unary_bool = fn () {
+   not true and (true and not false) or not (false or true and not false); 
+};
+
+unary_bin = fn () {
+   ~ 1 + ~ ( 2 * 3 ) + -2;
+};
+
+unary_add = fn () {
+   + 1 + - ( 2 * 3 ) + -2;
+};
+
+# the or looks funny, I have to find the way to use | on the lexer
+bin_ops = fn (a, b, c) {
+    a ! b & c ^ ~a;
+};
+
