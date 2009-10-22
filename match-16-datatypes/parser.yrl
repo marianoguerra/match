@@ -17,11 +17,11 @@ expr_list -> fun_expression expr_list: ['$1'|'$2'].
 
 fun_expression -> var match function_def endl: {line('$1'), fun_def, unwrap('$1'), '$3'}.
 
-expressions -> expression endl: ['$1'].
-expressions -> expression endl expressions: ['$1'|'$3'].
+expressions -> expression: ['$1'].
+expressions -> expression expressions: ['$1'|'$2'].
 
-expression -> bool_expr match bool_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
-expression -> bool_expr : '$1'.
+expression -> bool_expr match bool_expr endl: {line('$2'), unwrap('$2'), '$1', '$3'}.
+expression -> bool_expr endl : '$1'.
 
 bool_expr -> comp_expr bool_op bool_expr : {line('$2'), unwrap('$2'), '$1', '$3'}.
 bool_expr -> comp_expr : '$1'.
@@ -55,7 +55,7 @@ call_arguments -> call_argument:  ['$1'].
 call_arguments -> call_argument sep call_arguments:  ['$1'|'$3'].
 call_arguments -> atom_expr call_arguments:  [['$1']|'$2'].
 call_arguments -> call_argument atom_expr call_arguments:  ['$1'|['$2', '$3']].
-call_argument -> expression: '$1'.
+call_argument -> bool_expr: '$1'.
 
 function_def 	-> fn patterns: {line('$1'), unwrap('$1'), '$2'}.
 patterns	-> pattern patterns: ['$1'|'$2'].
@@ -84,7 +84,7 @@ literal -> list: '$1'.
 literal -> tuple: '$1'.
 literal -> var : {var, line('$1'), unwrap('$1')}.
 literal -> atom_expr : '$1'.
-literal -> open expression close : '$2'.
+literal -> open bool_expr close : '$2'.
 literal -> function_call : '$1'.
 literal -> function_def : '$1'.
 
@@ -96,10 +96,11 @@ list_items -> bool_expr : {line('$1'), cons, '$1', {nil, line('$1')}}.
 list_items -> bool_expr sep : {line('$1'), cons, '$1', {nil, line('$1')}}.
 
 tuple -> open close: {tuple, line('$1'), []}.
-tuple -> open tuple_items close: {line('$1'), tuple, lists:flatten('$2')}.
+tuple -> open bool_expr sep close: {tuple, line('$1'), ['$2']}.
+tuple -> open tuple_items close: {line('$1'), tuple, '$2'}.
 
-tuple_items -> bool_expr sep tuple_items : ['$1', '$3'].
-tuple_items -> bool_expr sep : ['$1'].
+tuple_items -> bool_expr sep tuple_items : ['$1'|'$3'].
+tuple_items -> bool_expr : ['$1'].
 
 atom_expr -> atom : {atom, line('$1'), get_atom(unwrap('$1'))}.
 
