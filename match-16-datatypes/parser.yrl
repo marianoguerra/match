@@ -2,11 +2,11 @@ Nonterminals
 expr_list grammar literal expressions expression function_def argument_def
 arguments block fun_expression function_call call_arguments call_argument
 call_params bool_expr comp_expr add_expr mul_expr unary_expr or_expr xor_expr
-and_expr patterns pattern atom_expr list list_items tuple tuple_items.
+and_expr patterns pattern atom_expr list list_items tuple tuple_items atoms.
 
 Terminals 
 bool_op comp_op add_op mul_op unary_op match var open close fn sep open_list close_list
-open_block close_block integer float boolean endl atom string and_op xor_op or_op.
+open_block close_block integer float boolean endl atom string and_op xor_op or_op dot.
 
 Rootsymbol grammar.
 
@@ -45,13 +45,16 @@ mul_expr -> unary_expr mul_op mul_expr : {unwrap('$2'), line('$2'), '$1', '$3'}.
 mul_expr -> unary_expr: '$1'.
 
 function_call -> var call_params: {call, line('$1'), '$1', '$2'}.
-function_call -> atom call_params: {callatom, line('$1'), get_atom(unwrap('$1')), '$2'}.
-function_call -> function_call call_params: {call, line('$1'), '$1', '$2'}.
+function_call -> atoms call_params: {callatom, line_on_atoms('$1'), '$1', '$2'}.
+%% function_call -> function_call call_params: {call, line('$1'), '$1', '$2'}.
+
+atoms -> dot var atoms : [{atom, line('$1'), unwrap('$2')} | '$3'].
+atoms -> dot var : [{atom, line('$2'), unwrap('$2')}].
 
 call_params -> open call_arguments close: lists:flatten('$2').
 call_params -> open close: [].
 
-call_arguments -> call_argument:  ['$1'].
+call_arguments -> call_argument: ['$1'].
 call_arguments -> call_argument sep call_arguments:  ['$1'|'$3'].
 call_arguments -> atom_expr call_arguments:  [['$1']|'$2'].
 call_arguments -> call_argument atom_expr call_arguments:  ['$1'|['$2', '$3']].
@@ -114,3 +117,5 @@ line({_, Line, _}) -> Line;
 line({_, Line, _, _}) -> Line.
 
 get_atom([_ | T]) -> list_to_atom(T).
+
+line_on_atoms([{atom, Line, _}|_]) -> Line.

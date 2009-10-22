@@ -143,8 +143,10 @@ matches({'+', _Line, A}) -> matches(A);
 matches({'-' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
 matches({'(', _Line, A}) -> matches(A);
 
-matches({callatom, Line, Atom, Args}) ->
-    {call, Line, {atom, Line, Atom}, lists:map(fun(Arg) -> matches(Arg) end, Args)};
+matches({callatom, Line, [Atom], Args}) ->
+    {call, Line, Atom, lists:map(fun(Arg) -> matches(Arg) end, Args)};
+matches({callatom, Line, [Package, Function], Args}) ->
+    {call, Line, {remote, Line, Package, Function}, lists:map(fun(Arg) -> matches(Arg) end, Args)};
 matches({call, Line, A, Args}) ->
     {call, Line, matches(A), lists:map(fun(Arg) -> matches(Arg) end, Args)};
 matches({'=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));

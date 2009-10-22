@@ -26,3 +26,13 @@ tuplestuff = fn (a, b) {
     t = (a, "string", :atom, [b], false, [2, 3 + 2 > 0]);
     (t, empty, oneitem);
 };
+
+returnvalue = fn(val) {
+    val + 2;
+};
+
+sayhi = fn (name) {
+    # call erlang code!
+    .io.format("~p on ~p ~p~n", [name, .time(), .returnvalue(2)]);
+};
+

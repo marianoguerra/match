@@ -22,6 +22,7 @@ End		= ;
 UnaryOp		= (not|~)
 % the string stuff taken from Reia
 String	 	= "(\\\^.|\\.|[^\"])*"
+Dot		= \.
 
 Rules.
 
@@ -41,6 +42,7 @@ Rules.
 {CloseList}		: {token, {close_list,	TokenLine, list_to_atom(TokenChars)}}.
 {Fn}   			: {token, {fn,		TokenLine, list_to_atom(TokenChars)}}.
 {Sep}   		: {token, {sep,		TokenLine, list_to_atom(TokenChars)}}.
+{Dot}   		: {token, {dot,		TokenLine, list_to_atom(TokenChars)}}.
 {End}   		: {token, {endl,	TokenLine, list_to_atom(TokenChars)}}.
 {Match}			: {token, {match,	TokenLine, list_to_atom(TokenChars)}}.
 {Identifier}+   	: {token, {var,		TokenLine, list_to_atom(TokenChars)}}.
