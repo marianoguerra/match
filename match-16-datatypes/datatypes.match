@@ -1,3 +1,4 @@
+
 string = fn () {
     a = "some simple string";
     b = "some \"escaped\" string";
@@ -17,4 +18,11 @@ callmewithioformat = fn (ioformat) {
 
 liststuff = fn (a, b) {
     [a, "string", :atom, [b], false, [2, 3 + 2 > 0]];
+};
+
+tuplestuff = fn (a, b) {
+    t = (a, "string", :atom, [b], false, [2, 3 + 2 > 0],);
+    empty = ();
+    oneitem = (1,);
+    (t, empty, oneitem,);
 };

@@ -2,7 +2,7 @@ Nonterminals
 expr_list grammar literal expressions expression function_def argument_def
 arguments block fun_expression function_call call_arguments call_argument
 call_params bool_expr comp_expr add_expr mul_expr unary_expr or_expr xor_expr
-and_expr patterns pattern atom_expr list list_items.
+and_expr patterns pattern atom_expr list list_items tuple tuple_items.
 
 Terminals 
 bool_op comp_op add_op mul_op unary_op match var open close fn sep open_list close_list
@@ -81,6 +81,7 @@ literal -> float : {float, line('$1'), unwrap('$1')}.
 literal -> boolean : {atom, line('$1'), unwrap('$1')}.
 literal -> string : {string, line('$1'), unwrap('$1')}.
 literal -> list: '$1'.
+literal -> tuple: '$1'.
 literal -> var : {var, line('$1'), unwrap('$1')}.
 literal -> atom_expr : '$1'.
 literal -> open expression close : '$2'.
@@ -93,6 +94,12 @@ list -> open_list list_items close_list: '$2'.
 list_items -> bool_expr sep list_items : {line('$1'), cons, '$1', '$3'}.
 list_items -> bool_expr : {line('$1'), cons, '$1', {nil, line('$1')}}.
 list_items -> bool_expr sep : {line('$1'), cons, '$1', {nil, line('$1')}}.
+
+tuple -> open close: {tuple, line('$1'), []}.
+tuple -> open tuple_items close: {line('$1'), tuple, lists:flatten('$2')}.
+
+tuple_items -> bool_expr sep tuple_items : ['$1', '$3'].
+tuple_items -> bool_expr sep : ['$1'].
 
 atom_expr -> atom : {atom, line('$1'), get_atom(unwrap('$1'))}.
 

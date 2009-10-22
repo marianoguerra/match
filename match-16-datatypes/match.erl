@@ -107,13 +107,17 @@ get_lex(file, Name) ->
     {ok, Tokens, _Endline} = lexer:string(Program),
     Tokens.
 
+matches([]) -> [];
+matches([_|_] = List) -> matches_list(List);
 matches({integer, _, _} = Ast) -> Ast;
 matches({float, _, _} = Ast) -> Ast;
 matches({atom, _, _} = Ast) -> Ast;
 matches({string, _, _} = Ast) -> Ast;
 matches({var, _, _} = Ast) -> Ast;
 matches({nil, _} = Ast) -> Ast;
+matches({tuple, _, _} = Ast) -> Ast;
 matches({Line, cons, A, B}) -> {cons, Line, matches(A), matches(B)};
+matches({Line, tuple, A}) -> {tuple, Line, matches_list(A)};
 matches({Line, '+' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, '-' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({Line, '*' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
@@ -150,6 +154,12 @@ matches({Line, fn, Patterns}) ->
 matches({Line, fun_def, Name, {_, fn, Patterns}}) ->
     function(Name, Line, get_function_arity(Patterns), match_function_body(Patterns));
 matches(Exp) -> {error, Exp}.
+
+matches_list([]) -> [];
+matches_list(Items) -> matches_list(Items, []).
+
+matches_list([], Accum) -> lists:reverse(Accum);
+matches_list([Head | Tail], Accum) -> matches_list(Tail, [matches(Head) | Accum]).
 
 match_fun_body(Patterns) ->
     {clauses, match_function_body(Patterns)}.
