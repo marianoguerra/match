@@ -1,0 +1,46 @@
+# create your own DSLs!
+
+is = fn(first :equal :to second) {
+    first == second;
+}
+(first :less :than second) {
+    first < second;
+};
+
+# made to show an example, since running it on erlang wont show the DSL
+
+test_is = fn(first, second?) {
+    :is(first :equal :to second?);
+};
+
+# nice API :)
+# convert(1 :hour :to :seconds);
+# convert(2 :hours :to :minutes);
+# convert(from :seconds :to :minutes);
+
+
+convert = fn(from :seconds :to :minutes) {
+    from / 60;
+}
+(from :minutes :to :seconds) {
+    from * 60;
+}
+(from :minute :to :seconds) {
+    from * 60;
+}
+(from :hours :to :minutes) {
+    from * 60;
+}
+(from :hour :to :minutes) {
+    from * 60;
+}
+(from :hours :to :seconds) {
+    from * 3600;
+}
+(from :hour :to :seconds) {
+    from * 3600;
+};
+
+from_minutes_to_seconds = fn(value) {
+    :convert(value :minutes :to :seconds);
+};

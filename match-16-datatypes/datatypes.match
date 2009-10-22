@@ -1,0 +1,20 @@
+string = fn () {
+    a = "some simple string";
+    b = "some \"escaped\" string";
+    c = "strange charactes ^!$%&/()=?'";
+    [a, b, c];
+};
+
+# 4> M:callmewithioformat(fun(X) -> io:format("~p~n", [X]) end).
+# "hey!"
+# ok
+
+callmewithioformat = fn (ioformat) {
+    ioformat("hey!");
+    c = "ohhai!";
+    ioformat(c);
+};
+
+liststuff = fn (a, b) {
+    [a, "string", :atom, [b], false, [2, 3 + 2 > 0]];
+};
