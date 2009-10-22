@@ -5,9 +5,9 @@
 unwrap({_,V}) -> V;
 unwrap({_,_,V}) -> V.
 
-line({Line, _}) -> Line;
+line({_, Line}) -> Line;
 line({_, Line, _}) -> Line;
-line({Line, _, _, _}) -> Line.
+line({_, Line, _, _}) -> Line.
 
 get_atom([_ | T]) -> list_to_atom(T).
 
@@ -1707,7 +1707,7 @@ yeccpars2_2_(__Stack0) ->
 yeccpars2_8_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , unwrap ( __1 ) , __2 }
+   { unwrap ( __1 ) , line ( __1 ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_9_,1}}).
@@ -1747,7 +1747,7 @@ yeccpars2_22_(__Stack0) ->
 yeccpars2_23_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , '(' , [ ] }
+   { '(' , line ( __1 ) , [ ] }
   end | __Stack].
 
 -compile({inline,{yeccpars2_24_,1}}).
@@ -1787,7 +1787,7 @@ yeccpars2_30_(__Stack0) ->
 yeccpars2_31_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , call , __1 , __2 }
+   { call , line ( __1 ) , __1 , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_39_,1}}).
@@ -1811,7 +1811,7 @@ yeccpars2_44_(__Stack0) ->
 yeccpars2_47_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_49_,1}}).
@@ -1819,7 +1819,7 @@ yeccpars2_47_(__Stack0) ->
 yeccpars2_49_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_50_,1}}).
@@ -1867,7 +1867,7 @@ yeccpars2_56_(__Stack0) ->
 yeccpars2_58_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_60_,1}}).
@@ -1875,7 +1875,7 @@ yeccpars2_58_(__Stack0) ->
 yeccpars2_60_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_62_,1}}).
@@ -1883,7 +1883,7 @@ yeccpars2_60_(__Stack0) ->
 yeccpars2_62_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_64_,1}}).
@@ -1891,7 +1891,7 @@ yeccpars2_62_(__Stack0) ->
 yeccpars2_64_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_66_,1}}).
@@ -1899,7 +1899,7 @@ yeccpars2_64_(__Stack0) ->
 yeccpars2_66_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_67_,1}}).
@@ -1907,7 +1907,7 @@ yeccpars2_66_(__Stack0) ->
 yeccpars2_67_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , unwrap ( __1 ) , __2 }
+   { unwrap ( __1 ) , line ( __1 ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_69_,1}}).
@@ -1915,7 +1915,7 @@ yeccpars2_67_(__Stack0) ->
 yeccpars2_69_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , cons , __1 , { nil , line ( __1 ) } }
+   { cons , line ( __1 ) , __1 , { nil , line ( __1 ) } }
   end | __Stack].
 
 -compile({inline,{yeccpars2_70_,1}}).
@@ -1931,7 +1931,7 @@ yeccpars2_70_(__Stack0) ->
 yeccpars2_71_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , cons , __1 , { nil , line ( __1 ) } }
+   { cons , line ( __1 ) , __1 , { nil , line ( __1 ) } }
   end | __Stack].
 
 -compile({inline,{yeccpars2_72_,1}}).
@@ -1939,7 +1939,7 @@ yeccpars2_71_(__Stack0) ->
 yeccpars2_72_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , cons , __1 , __3 }
+   { cons , line ( __1 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_73_,1}}).
@@ -1995,7 +1995,7 @@ yeccpars2_81_(__Stack0) ->
 yeccpars2_83_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , tuple , __2 }
+   { tuple , line ( __1 ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_84_,1}}).
@@ -2003,7 +2003,7 @@ yeccpars2_83_(__Stack0) ->
 yeccpars2_84_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , callatom , get_atom ( unwrap ( __1 ) ) , __2 }
+   { callatom , line ( __1 ) , get_atom ( unwrap ( __1 ) ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_85_,1}}).
@@ -2011,7 +2011,7 @@ yeccpars2_84_(__Stack0) ->
 yeccpars2_85_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , unwrap ( __1 ) , __2 }
+   { unwrap ( __1 ) , line ( __1 ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_86_,1}}).
@@ -2019,7 +2019,7 @@ yeccpars2_85_(__Stack0) ->
 yeccpars2_86_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , unwrap ( __1 ) , lists : flatten ( __2 ) }
+   { unwrap ( __1 ) , line ( __1 ) , lists : flatten ( __2 ) }
   end | __Stack].
 
 -compile({inline,{yeccpars2_87_,1}}).
@@ -2035,7 +2035,7 @@ yeccpars2_87_(__Stack0) ->
 yeccpars2_88_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , call , __1 , __2 }
+   { call , line ( __1 ) , __1 , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_91_,1}}).
@@ -2059,7 +2059,7 @@ yeccpars2_92_(__Stack0) ->
 yeccpars2_93_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , '{' , [ __1 ] }
+   { '{' , line ( __1 ) , [ __1 ] }
   end | __Stack].
 
 -compile({inline,{yeccpars2_94_,1}}).
@@ -2091,7 +2091,7 @@ yeccpars2_99_(__Stack0) ->
 yeccpars2_102_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __2 ) , unwrap ( __2 ) , __1 , __3 }
+   { unwrap ( __2 ) , line ( __2 ) , __1 , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_103_,1}}).
@@ -2107,7 +2107,7 @@ yeccpars2_103_(__Stack0) ->
 yeccpars2_104_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , unwrap ( __1 ) , __2 }
+   { unwrap ( __1 ) , line ( __1 ) , __2 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_105_,1}}).
@@ -2123,7 +2123,7 @@ yeccpars2_105_(__Stack0) ->
 yeccpars2_106_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
-   { line ( __1 ) , fun_def , unwrap ( __1 ) , __3 }
+   { fun_def , line ( __1 ) , unwrap ( __1 ) , __3 }
   end | __Stack].
 
 -compile({inline,{yeccpars2_107_,1}}).

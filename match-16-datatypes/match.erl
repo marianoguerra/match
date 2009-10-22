@@ -115,43 +115,42 @@ matches({atom, _, _} = Ast) -> Ast;
 matches({string, _, _} = Ast) -> Ast;
 matches({var, _, _} = Ast) -> Ast;
 matches({nil, _} = Ast) -> Ast;
-matches({tuple, _, _} = Ast) -> Ast;
-matches({Line, cons, A, B}) -> {cons, Line, matches(A), matches(B)};
-matches({Line, tuple, A}) -> {tuple, Line, matches_list(A)};
-matches({Line, '+' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '-' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '*' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '/' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '%' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({cons, Line, A, B}) -> {cons, Line, matches(A), matches(B)};
+matches({tuple, Line, A}) -> {tuple, Line, matches_list(A)};
+matches({'+' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'-' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'*' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'/' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'%' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
-matches({Line, '<' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '<=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '==' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '>=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '>' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '!=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'<' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'<=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'==' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'>=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'>' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'!=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
-matches({Line, '!' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '&' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, '^' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'!' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'&' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'^' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
-matches({Line, 'and' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, 'or' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'and' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({'or' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 
-matches({Line, 'not' = Op, A}) -> forms(Op, Line, matches(A), nil);
-matches({Line, '~' = Op, A}) -> forms(Op, Line, matches(A), nil);
-matches({_Line, '+', A}) -> matches(A);
-matches({Line, '-' = Op, A}) -> forms(Op, Line, matches(A), nil);
-matches({_Line, '(', A}) -> matches(A);
+matches({'not' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
+matches({'~' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
+matches({'+', _Line, A}) -> matches(A);
+matches({'-' = Op, Line, A}) -> forms(Op, Line, matches(A), nil);
+matches({'(', _Line, A}) -> matches(A);
 
-matches({Line, callatom, Atom, Args}) ->
+matches({callatom, Line, Atom, Args}) ->
     {call, Line, {atom, Line, Atom}, lists:map(fun(Arg) -> matches(Arg) end, Args)};
-matches({Line, call, A, Args}) ->
+matches({call, Line, A, Args}) ->
     {call, Line, matches(A), lists:map(fun(Arg) -> matches(Arg) end, Args)};
-matches({Line, '=' = Op, A, B}) -> forms(Op, Line, matches(A), matches(B));
-matches({Line, fn, Patterns}) ->
+matches({'=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
+matches({fn, Line, Patterns}) ->
     {'fun', Line, match_fun_body(Patterns)};
-matches({Line, fun_def, Name, {_, fn, Patterns}}) ->
+matches({fun_def, Line, Name, {fn, _Line, Patterns}}) ->
     function(Name, Line, get_function_arity(Patterns), match_function_body(Patterns));
 matches(Exp) -> {error, Exp}.
 
@@ -170,9 +169,9 @@ match_function_body([], Clauses) -> lists:reverse(Clauses);
 match_function_body([Pattern | Patterns], Clauses) ->
      match_function_body(Patterns, [match_pattern(Pattern) | Clauses]).
 
-match_pattern({pattern, {Line, '(', Args}, {_, '{', Body}}) ->
+match_pattern({pattern, {'(', Line, Args}, {'{', _, Body}}) ->
     function_body([matches(Arg) || Arg <- Args], Line, lists:map(fun(L) -> matches(L) end, Body)).
 
 get_function_arity([]) -> 0;
-get_function_arity([{pattern, {_, '(', Arguments}, _}|_T]) -> length(Arguments).
+get_function_arity([{pattern, {'(', _Line, Arguments}, _}|_T]) -> length(Arguments).
 
