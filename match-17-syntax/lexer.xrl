@@ -1,7 +1,7 @@
 Definitions.
 
-Identifier	= [A-Z_][a-zA-Z0-9_]+
-Atom		= [a-z][a-zA-Z0-9_]+
+Identifier	= [A-Z_][a-zA-Z0-9_]*
+Atom		= [a-z][a-zA-Z0-9_@]*
 Uppercase	= [A-Z]
 Number       	= [0-9]
 AddOp     	= (\+|-)
@@ -24,7 +24,6 @@ End		= ;
 UnaryOp		= (not|~)
 % the string stuff taken from Reia
 String	 	= "(\\\^.|\\.|[^\"])*"
-Dot		= \.
 Ltr		= ->
 Rtl		= <-
 Split		= :
@@ -47,7 +46,6 @@ Rules.
 {CloseList}		: {token, {close_list,	TokenLine, list_to_atom(TokenChars)}}.
 {Fn}   			: {token, {fn,		TokenLine, list_to_atom(TokenChars)}}.
 {Sep}   		: {token, {sep,		TokenLine, list_to_atom(TokenChars)}}.
-{Dot}   		: {token, {dot,		TokenLine, list_to_atom(TokenChars)}}.
 {End}   		: {token, {endl,	TokenLine, list_to_atom(TokenChars)}}.
 {Match}			: {token, {match,	TokenLine, list_to_atom(TokenChars)}}.
 {Rtl}			: {token, {rtl,		TokenLine, list_to_atom(TokenChars)}}.

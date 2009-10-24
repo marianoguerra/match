@@ -1,0 +1,7 @@
+first = fn (Items) {
+    [X * 2 for X in Items];
+};
+
+multi = fn(List1, List2) {
+    [X * Y for X in List1 for Y in List2];
+};

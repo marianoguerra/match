@@ -2,7 +2,8 @@ Nonterminals
     expr_list grammar literal expressions expression function_def argument_def
     arguments block fun_expression function_call call_arguments call_argument
     call_params bool_expr comp_expr add_expr mul_expr unary_expr or_expr
-    xor_expr and_expr patterns pattern list list_items tuple tuple_items.
+    xor_expr and_expr patterns pattern list list_items tuple tuple_items
+    list_comp list_generators list_generator.
 
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
@@ -101,6 +102,7 @@ literal -> atom                 : {atom,    line('$1'), unwrap('$1')}.
 literal -> open bool_expr close : '$2'.
 literal -> function_call        : '$1'.
 literal -> function_def         : '$1'.
+literal -> list_comp            : '$1'.
 
 list -> open_list close_list            : {nil, line('$1')}.
 list -> open_list list_items close_list : '$2'.
@@ -116,6 +118,13 @@ tuple -> open tuple_items close : {tuple, line('$1'), '$2'}.
 tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
 tuple_items -> bool_expr                    : ['$1'].
 tuple_items -> bool_expr sep                : ['$1'].
+
+list_comp   -> open_list bool_expr list_generators close_list : {lc, line('$1'), '$2', '$3'}.
+
+list_generators -> list_generator list_generators   : ['$1'|'$2'].
+list_generators -> list_generator                   : ['$1'].
+
+list_generator  -> atom bool_expr atom bool_expr   : {generate, line('$1'), '$2', '$4'}. 
 
 Erlang code.
 

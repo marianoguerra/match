@@ -6,6 +6,10 @@ head = fn([]) {
    head(Tail);
 };
 
+append = fn(List1, List2) {
+    [List1 : List2];
+};
+
 match = fn((name, Name, age, Age)) {
    io->format("name: ~p age: ~p~n", [Name, Age]);
 };
