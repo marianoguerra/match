@@ -29,7 +29,7 @@ forms('&', Line, Ast1, Ast2) ->
 forms('^', Line, Ast1, Ast2) ->
   {op, Line, 'bxor', Ast1, Ast2};
 % the code below is from reia (I would have written the same :P)
-% changes only on == and !=
+% changes on == and != and parameter order
 forms('*' = Op, Line, Ast1, Ast2) ->
   {op, Line, Op, Ast1, Ast2};
 forms('/' = Op, Line, Ast1, Ast2) ->
@@ -64,20 +64,20 @@ forms('<=', Line, Ast1, Ast2) ->
   {op, Line, '=<', Ast1, Ast2}.
 % until here code from reia
 
-get_ast(From, String, ModuleName) ->
+get_ast(From, String) ->
     Ast = lists:map(fun(Line) -> matches(Line) end, get_tree(From, String)),
-    module(ModuleName, Ast).
+    module(get_module_name(String), Ast).
 
 get_code(Ast) ->
     {ok, _, Code} = compile:forms(Ast),
     Code.
 
-compile(ModuleName, Ast) ->
+build_module(ModuleName, Ast) ->
     {module, Module} = code:load_binary(ModuleName, ModuleName, get_code(Ast)),
     Module.
 
-to_erlang(From, String, ModuleName) ->
-    Ast = get_ast(From, String, ModuleName),
+to_erlang(From, String) ->
+    Ast = get_ast(From, String),
     erl_prettypr:format(erl_syntax:form_list(Ast)).
 
 from_erlang(Name) ->
@@ -88,10 +88,13 @@ from_erlang(Name) ->
     Parsed.
 
 build(From, String) ->
-    build(From, String, module).
+    ModuleName = get_module_name(String),
+    build_module(ModuleName, get_ast(From, String)).
 
-build(From, String, ModuleName) ->
-    compile(ModuleName, get_ast(From, String, ModuleName)).
+compile(Name) ->
+    Module = get_code(get_ast(file, Name)),
+    {ok, Device} = file:open(get_module_beam_name(Name), [binary, write]),
+    file:write(Device, Module).
 
 get_tree(From, String) ->
     Tokens = get_lex(From, String),
@@ -106,6 +109,14 @@ get_lex(file, Name) ->
     Program = binary_to_list(Content),
     {ok, Tokens, _Endline} = lexer:string(Program),
     Tokens.
+
+get_module_name(String) ->
+    [ModuleNameStr | _] = string:tokens(String, "."),
+    list_to_atom(ModuleNameStr).
+
+get_module_beam_name(String) ->
+    [ModuleNameStr | _] = string:tokens(String, "."),
+    string:concat(ModuleNameStr, ".beam").
 
 matches([]) -> [];
 matches([_|_] = List) -> matches_list(List);

@@ -1,6 +1,6 @@
 head = fn([]) {
    ok;
-} 
+}
 ([Head : Tail]) {
    io->format("~p~n", [Head]);
    head(Tail);
@@ -60,8 +60,16 @@ testClosure = fn() {
     ByTwo(4);
 };
 
+callcall = fn(One, Two) {
+    closure(One)(Two);
+};
+
 testMatch = fn(Value) {
     2 = 2;
     (1, 2) = (1, 2);
     (1, "mariano", false) = (1, Value, false);
+};
+
+listmatch = fn ([Head, First, Second : _Tail]) {
+    Head + First + Second;
 };

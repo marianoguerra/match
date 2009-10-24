@@ -1,3 +1,4 @@
 
-asd([]) -> ok;
-asd([Head, Tail]) -> asd(Tail).
+function(Var, OtherOne) ->
+    Var + OtherOne.
+
