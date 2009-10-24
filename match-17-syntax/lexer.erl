@@ -12,6 +12,17 @@
 
 %% User code. This is placed here to allow extra attributes.
 
+atom_or_identifier(String, TokenLine) ->
+     case is_reserved(String) of
+     	true -> 
+            {list_to_atom(String), TokenLine};
+	false ->   
+            {atom, TokenLine, list_to_atom(String)}
+     end.
+
+is_reserved("if") -> true;
+is_reserved(_) -> false.
+
 build_string(Type, Chars, Line, Len) ->
   String = unescape_string(lists:sublist(Chars, 2, Len - 2)),
     {token, {Type, Line, String}}.
@@ -821,7 +832,7 @@ yyaction(20, TokenLen, YYtcs, TokenLine) ->
     {token,{var,TokenLine,list_to_atom(TokenChars)}};
 yyaction(21, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
-    {token,{atom,TokenLine,list_to_atom(TokenChars)}};
+    {token,atom_or_identifier(TokenChars, TokenLine)};
 yyaction(22, TokenLen, YYtcs, TokenLine) ->
     TokenChars = yypre(YYtcs, TokenLen),
     {token,{and_op,TokenLine,list_to_atom(TokenChars)}};

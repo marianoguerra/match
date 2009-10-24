@@ -5,3 +5,7 @@ first = fn (Items) {
 multi = fn(List1, List2) {
     [X * Y for X in List1 for Y in List2];
 };
+
+evens = fn (Numbers) {
+    [X for X in Numbers if X % 2 == 0];
+};

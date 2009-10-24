@@ -51,7 +51,7 @@ Rules.
 {Rtl}			: {token, {rtl,		TokenLine, list_to_atom(TokenChars)}}.
 {Ltr}			: {token, {ltr,		TokenLine, list_to_atom(TokenChars)}}.
 {Identifier}	   	: {token, {var,		TokenLine, list_to_atom(TokenChars)}}.
-{Atom}		   	: {token, {atom,	TokenLine, list_to_atom(TokenChars)}}.
+{Atom}		   	: {token, atom_or_identifier(TokenChars, TokenLine)}.
 &			: {token, {and_op,	TokenLine, list_to_atom(TokenChars)}}.
 !			: {token, {or_op,	TokenLine, list_to_atom(TokenChars)}}.
 \^			: {token, {xor_op,	TokenLine, list_to_atom(TokenChars)}}.
@@ -62,6 +62,17 @@ Rules.
 
 
 Erlang code.
+
+atom_or_identifier(String, TokenLine) ->
+     case is_reserved(String) of
+     	true -> 
+            {list_to_atom(String), TokenLine};
+	false ->   
+            {atom, TokenLine, list_to_atom(String)}
+     end.
+
+is_reserved("if") -> true;
+is_reserved(_) -> false.
 
 build_string(Type, Chars, Line, Len) ->
   String = unescape_string(lists:sublist(Chars, 2, Len - 2)),

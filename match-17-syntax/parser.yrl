@@ -8,7 +8,7 @@ Nonterminals
 Terminals 
     bool_op comp_op add_op mul_op unary_op match var open close fn sep
     open_list close_list open_block close_block integer float boolean endl atom
-    string and_op xor_op or_op rtl ltr split_op.
+    string and_op xor_op or_op rtl ltr split_op if.
 
 Rootsymbol grammar.
 
@@ -119,12 +119,13 @@ tuple_items -> bool_expr sep tuple_items    : ['$1'|'$3'].
 tuple_items -> bool_expr                    : ['$1'].
 tuple_items -> bool_expr sep                : ['$1'].
 
-list_comp   -> open_list bool_expr list_generators close_list : {lc, line('$1'), '$2', '$3'}.
+list_comp   -> open_list bool_expr list_generators close_list : {lc, line('$1'), '$2', lists:flatten('$3')}.
 
 list_generators -> list_generator list_generators   : ['$1'|'$2'].
-list_generators -> list_generator                   : ['$1'].
+list_generators -> list_generator                   : '$1'.
 
-list_generator  -> atom bool_expr atom bool_expr   : {generate, line('$1'), '$2', '$4'}. 
+list_generator  -> atom bool_expr atom bool_expr  : [{generate, line('$1'), '$2', '$4'}]. 
+list_generator  -> atom bool_expr atom bool_expr if bool_expr : [{generate, line('$1'), '$2', '$4'},'$6']. 
 
 Erlang code.
 

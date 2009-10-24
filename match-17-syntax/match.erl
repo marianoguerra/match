@@ -156,6 +156,7 @@ matches({'(', _Line, A}) -> matches(A);
 
 matches({lc, Line, Exp, Generators}) -> {lc, Line, matches(Exp), matches_list(Generators)};
 matches({generate, Line, For, In}) -> {generate, Line, matches(For), matches(In)};
+matches({generate, Line, For, In, If}) -> {generate, Line, matches(For), matches(In), matches(If)};
 matches({callatom, Line, [Atom], Args}) ->
     {call, Line, Atom, lists:map(fun(Arg) -> matches(Arg) end, Args)};
 matches({callatom, Line, [Package, Function], Args}) ->
