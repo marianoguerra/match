@@ -11,8 +11,8 @@ module(Name, Ast, EofLine) ->
 function(Name, Line, Arity, Ast) ->
     {function, Line, Name, Arity, Ast}.
 
-function_body(Pattern, Line, Body) ->
-    {clause, Line, Pattern, [], Body}.
+function_body(Pattern, Line, Guard, Body) ->
+    {clause, Line, Pattern, Guard, Body}.
 
 forms('=', Line, Ast1, Ast2) ->
   {match, Line, Ast1, Ast2};
@@ -51,8 +51,12 @@ forms('or', Line, Ast1, Ast2) ->
 
 %% Comparison operators
 forms('==', Line, Ast1, Ast2) ->
+  {op, Line, '==', Ast1, Ast2};
+forms('===', Line, Ast1, Ast2) ->
   {op, Line, '=:=', Ast1, Ast2};
 forms('!=', Line, Ast1, Ast2) ->
+  {op, Line, '/=', Ast1, Ast2};
+forms('!==', Line, Ast1, Ast2) ->
   {op, Line, '=/=', Ast1, Ast2};
 forms('<' = Op, Line, Ast1, Ast2) ->
   {op, Line, Op, Ast1, Ast2};
@@ -79,6 +83,9 @@ build_module(ModuleName, Ast) ->
 to_erlang(From, String) ->
     Ast = get_ast(From, String),
     erl_prettypr:format(erl_syntax:form_list(Ast)).
+
+print_erlang(From, String) ->
+    io:format("~s~n", [to_erlang(From, String)]).
 
 from_erlang(Name) ->
     {ok, Content} = file:read_file(Name),
@@ -158,11 +165,11 @@ matches({lc, Line, Exp, Generators}) -> {lc, Line, matches(Exp), matches_list(Ge
 matches({generate, Line, For, In}) -> {generate, Line, matches(For), matches(In)};
 matches({generate, Line, For, In, If}) -> {generate, Line, matches(For), matches(In), matches(If)};
 matches({callatom, Line, [Atom], Args}) ->
-    {call, Line, Atom, lists:map(fun(Arg) -> matches(Arg) end, Args)};
+    {call, Line, Atom, matches_list(Args)};
 matches({callatom, Line, [Package, Function], Args}) ->
-    {call, Line, {remote, Line, Package, Function}, lists:map(fun(Arg) -> matches(Arg) end, Args)};
+    {call, Line, {remote, Line, Package, Function}, matches_list(Args)};
 matches({call, Line, A, Args}) ->
-    {call, Line, matches(A), lists:map(fun(Arg) -> matches(Arg) end, Args)};
+    {call, Line, matches(A), matches_list(Args)};
 matches({'=' = Op, Line, A, B}) -> forms(Op, Line, matches(A), matches(B));
 matches({fn, Line, Patterns}) ->
     {'fun', Line, match_fun_body(Patterns)};
@@ -185,9 +192,11 @@ match_function_body([], Clauses) -> lists:reverse(Clauses);
 match_function_body([Pattern | Patterns], Clauses) ->
      match_function_body(Patterns, [match_pattern(Pattern) | Clauses]).
 
-match_pattern({pattern, {'(', Line, Args}, {'{', _, Body}}) ->
-    function_body([matches(Arg) || Arg <- Args], Line, lists:map(fun(L) -> matches(L) end, Body)).
+match_pattern({pattern, {'(', Line, Args}, [], {'{', _, Body}}) ->
+     function_body([matches(Arg) || Arg <- Args], Line, [], matches_list(Body));
+match_pattern({pattern, {'(', Line, Args}, Guards, {'{', _, Body}}) ->
+     function_body([matches(Arg) || Arg <- Args], Line, [matches_list(Guards)], matches_list(Body)).
 
 get_function_arity([]) -> 0;
-get_function_arity([{pattern, {'(', _Line, Arguments}, _}|_T]) -> length(Arguments).
+get_function_arity([{pattern, {'(', _Line, Arguments}, _, _}|_T]) -> length(Arguments).
 

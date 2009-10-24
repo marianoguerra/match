@@ -1,4 +1,6 @@
 
-even(Numbers) ->
-    [X || X <- Numbers, X rem 2 =:= 0].
+even(Value) when Value rem 2 == 0 ->
+    true;
+even(_) ->
+    false.
 

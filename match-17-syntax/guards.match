@@ -1,0 +1,22 @@
+
+even = fn(Value) if Value % 2 == 0 {
+    true;
+} (_) {
+    false;
+};
+
+# pattern match for unit tests FTW!
+
+testEven = fn() {
+    true = even(2);
+    true = even(4);
+    true = even(6);
+    true = even(8);
+
+    false = even(1);
+    false = even(3);
+    false = even(5);
+    false = even(7);
+
+    ok;
+};

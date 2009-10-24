@@ -6,7 +6,7 @@ Uppercase	= [A-Z]
 Number       	= [0-9]
 AddOp     	= (\+|-)
 MulOp     	= (\*|/|%)
-CompOp    	= (<|<=|==|>=|>|!=)
+CompOp    	= (<|<=|==|===|>=|>|!=|!==)
 BoolOp   	= (and|or)
 White      	= [\s|\n]
 Comment 	= #.*

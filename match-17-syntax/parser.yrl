@@ -75,7 +75,8 @@ function_def 	-> fn patterns      : {unwrap('$1'), line('$1'), '$2'}.
 
 patterns	-> pattern patterns     : ['$1'|'$2'].
 patterns	-> pattern              : ['$1'].
-pattern		-> argument_def block   : {pattern, '$1', '$2'}.
+pattern		-> argument_def block   : {pattern, '$1', [], '$2'}.
+pattern		-> argument_def if bool_expr block   : {pattern, '$1', ['$3'], '$4'}.
 
 argument_def	-> open arguments close : {unwrap('$1'), line('$1'), lists:flatten('$2')}.
 argument_def	-> open close           : {unwrap('$1'), line('$1'), []}.
